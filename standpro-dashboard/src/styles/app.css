@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input,
+input[type="time"],
+input[type="date"] {
+  @apply w-full border border-gray-300 rounded-md text-sm p-3 !important;
+}

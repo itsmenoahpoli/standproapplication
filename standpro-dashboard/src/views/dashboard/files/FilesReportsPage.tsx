@@ -51,9 +51,15 @@ interface MonthlyGroup {
   records: Record[];
 }
 
+interface YearlyGroup {
+  year: number;
+  total: number;
+  records: Record[];
+}
+
 const FolderBrowser: React.FC<{
   type: string;
-  files: DailyGroup[] | MonthlyGroup[];
+  files: DailyGroup[] | MonthlyGroup[] | YearlyGroup[];
 }> = ({ type, files }) => {
   const handleDownload = (path: string) => {
     window.open(path, "_blank");
@@ -140,24 +146,47 @@ const FolderBrowser: React.FC<{
   };
 
   const renderDailyView = () => {
+    const dailyGroups = files as DailyGroup[];
+    const totalRecords = dailyGroups.reduce(
+      (sum, group) => sum + group.total,
+      0
+    );
+
     return (
-      <div className="flex flex-col h-full">
-        <Tabs className="border-b border-gray-200">
-          {(files as DailyGroup[]).map((group) => (
-            <Tabs.Item key={group.date} title={group.date}>
-              <div className="flex flex-col h-[calc(100vh-280px)]">
-                <div className="bg-white border-b py-2">
-                  <span className="text-sm text-gray-500">
-                    Total records: {group.total}
-                  </span>
+      <div className="flex flex-col h-[calc(100vh-280px)]">
+        <div className="bg-white border-b py-2">
+          <span className="text-sm text-gray-500">
+            Total records: {totalRecords}
+          </span>
+        </div>
+        <div className="flex-1 overflow-auto pb-[100px]">
+          {dailyGroups.length > 0 ? (
+            dailyGroups.map((group, index) => (
+              <div key={group.date}>
+                <div className="sticky top-0 z-10 bg-gray-50 px-4 py-2 border-b">
+                  <h3 className="text-sm font-medium text-gray-700">
+                    {new Date(group.date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                    <span className="ml-2 text-gray-500">
+                      ({group.total} records)
+                    </span>
+                  </h3>
                 </div>
-                <div className="flex-1 overflow-auto pb-[100px]">
-                  {renderFileTable(group.records)}
-                </div>
+                {renderFileTable(group.records)}
+                {/* Add spacing between groups except for the last one */}
+                {index < dailyGroups.length - 1 && <div className="h-6" />}
               </div>
-            </Tabs.Item>
-          ))}
-        </Tabs>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 py-8">
+              No records found
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -185,6 +214,39 @@ const FolderBrowser: React.FC<{
     );
   };
 
+  const renderYearlyView = () => {
+    const yearlyGroups = files as YearlyGroup[];
+
+    if (!Array.isArray(yearlyGroups) || yearlyGroups.length === 0) {
+      return (
+        <div className="text-center text-gray-500 py-8">No records found</div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-full">
+        <Tabs className="border-b border-gray-200">
+          {yearlyGroups.map((group) =>
+            group?.year ? (
+              <Tabs.Item key={group.year} title={group.year.toString()}>
+                <div className="flex flex-col h-[calc(100vh-280px)]">
+                  <div className="bg-white border-b py-2">
+                    <span className="text-sm text-gray-500">
+                      Total records: {group.total || 0}
+                    </span>
+                  </div>
+                  <div className="flex-1 overflow-auto pb-[100px]">
+                    {renderFileTable(group.records || [])}
+                  </div>
+                </div>
+              </Tabs.Item>
+            ) : null
+          )}
+        </Tabs>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-[calc(100vh-6rem)]">
       <Card className="h-full">
@@ -197,7 +259,8 @@ const FolderBrowser: React.FC<{
           <div className="flex-1">
             {type === "daily" && renderDailyView()}
             {type === "monthly" && renderMonthlyView()}
-            {type !== "daily" && type !== "monthly" && (
+            {type === "yearly" && renderYearlyView()}
+            {type !== "daily" && type !== "monthly" && type !== "yearly" && (
               <div className="text-center text-gray-500 py-8">
                 {type.charAt(0).toUpperCase() + type.slice(1)} view is not
                 implemented yet

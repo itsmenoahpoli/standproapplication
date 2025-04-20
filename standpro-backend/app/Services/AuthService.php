@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthService
@@ -39,5 +40,12 @@ class AuthService
         $user->currentAccessToken()->delete();
 
         return null;
+    }
+
+    public function createAccount($data)
+    {
+        $data['password'] = Hash::make($data['password']);
+
+        return $this->user->create($data);
     }
 }

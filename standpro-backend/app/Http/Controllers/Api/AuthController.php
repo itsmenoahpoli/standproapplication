@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -28,5 +29,12 @@ class AuthController extends Controller
         $result = $this->authService->unauthenticate($request->user(), $sessionId);
 
         return response()->json($result, Response::HTTP_OK);
+    }
+
+    public function register(RegisterRequest $request) : JsonResponse
+    {
+        $result = $this->authService->createAccount($request->validated());
+
+        return response()->json($result, Response::HTTP_CREATED);
     }
 }

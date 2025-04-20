@@ -16,9 +16,8 @@ class UploadFilesService extends UploadFilesRepository
 
     public function create($payload)
     {
-
-
-        $payload['path'] = $payload['file']->store('uploads', 'public');
+        $storagePath = $payload['file']->store('uploads', 'public');
+        $payload['path'] = env('APP_URL') . '/storage/' . $storagePath;
 
         unset($payload['file']);
 

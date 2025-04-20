@@ -88,7 +88,7 @@ export const DashboardLayout: React.FC = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-6 overflow-auto">
+        <div className="flex-1 p-6 overflow-auto" style={{ zoom: 0.965 }}>
           <Outlet />
         </div>
       </div>

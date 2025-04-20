@@ -6,7 +6,6 @@ import { Button, Card, Table } from "flowbite-react";
 import { FiPlusCircle, FiEdit, FiEye, FiTrash2 } from "react-icons/fi";
 import { RecordLogsService } from "@/services";
 import { RecordLog } from "@/types/models";
-import FILES_LOGO from "@/assets/files-logo.jpeg";
 
 const _recordLogsService = new RecordLogsService();
 
@@ -133,7 +132,6 @@ const FilesIncomingPage: React.FC = () => {
                       <Table.Cell>{d.from}</Table.Cell>
                       <Table.Cell>{d.agency}</Table.Cell>
                       <Table.Cell>{d.received_by}</Table.Cell>
-                      <Table.Cell>{d.name_of_folder}</Table.Cell>
                       <Table.Cell>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {d.type_resource?.toUpperCase()}

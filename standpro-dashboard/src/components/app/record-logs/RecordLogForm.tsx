@@ -118,14 +118,6 @@ export const RecordLogForm: React.FC<Props> = (props) => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <small>Name of Folder</small>
-        <input
-          placeholder="Name of Folder"
-          {...register("name_of_folder")}
-          required
-        />
-      </div>
-      <div className="flex flex-col gap-2">
         <small>Type (Internal or External)</small>
         <select
           className="border border-gray-300 rounded-md text-xs"

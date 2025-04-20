@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { FcOpenedFolder } from "react-icons/fc";
 import { Card, Button, Table, Tabs } from "flowbite-react";
 import { FileReportsService } from "@/services";
-import { FiEye, FiDownload } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
 
 const _fileReportsService = new FileReportsService();
 
@@ -57,6 +57,10 @@ interface YearlyGroup {
   records: Record[];
 }
 
+const getFileSrc = (path: string) => {
+  return `http://localhost:8000/assets/get?path=${path}`;
+};
+
 const FolderBrowser: React.FC<{
   type: string;
   files: DailyGroup[] | MonthlyGroup[] | YearlyGroup[];
@@ -98,16 +102,11 @@ const FolderBrowser: React.FC<{
     </div>
   );
 
-  const handleDownload = (path: string) => {
-    window.open(path, "_blank");
-  };
-
-  const renderFileTable = (records: Record[]) => (
-    <div className="overflow-auto">
+  const renderFileTable = (records: Record[]) => {
+    return (
       <Table>
-        <Table.Head className="sticky top-0 bg-white">
+        <Table.Head>
           <Table.HeadCell>Date</Table.HeadCell>
-          <Table.HeadCell>Time</Table.HeadCell>
           <Table.HeadCell>Subject</Table.HeadCell>
           <Table.HeadCell>Type</Table.HeadCell>
           <Table.HeadCell>From</Table.HeadCell>
@@ -118,9 +117,8 @@ const FolderBrowser: React.FC<{
         <Table.Body>
           {records.map((record) => (
             <Table.Row key={record.id} className="hover:bg-gray-50">
-              <Table.Cell>{record.date_received || "N/A"}</Table.Cell>
-              <Table.Cell>{record.time_released || "N/A"}</Table.Cell>
-              <Table.Cell className="font-medium">{record.subject}</Table.Cell>
+              <Table.Cell>{record.date_received}</Table.Cell>
+              <Table.Cell>{record.subject}</Table.Cell>
               <Table.Cell>
                 <div className="flex gap-2">
                   <span
@@ -151,23 +149,14 @@ const FolderBrowser: React.FC<{
                   >
                     <FiEye size={16} />
                   </a>
-                  <button
-                    onClick={() => handleDownload(record.path)}
-                    className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Download"
-                  >
-                    <FiDownload size={16} />
-                  </button>
                 </div>
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table>
-      {/* Add empty div for bottom padding */}
-      <div className="h-[100px]"></div>
-    </div>
-  );
+    );
+  };
 
   const formatMonthYear = (monthStr: string) => {
     if (!monthStr) return "N/A";

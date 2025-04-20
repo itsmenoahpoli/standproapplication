@@ -13,21 +13,38 @@ const LoadComponent = (Component: React.ComponentType) => {
 /**
  * Error Page
  */
-const ErrorPage = LoadComponent(React.lazy(() => import("@/views/system/ErrorPage")));
+const ErrorPage = LoadComponent(
+  React.lazy(() => import("@/views/system/ErrorPage"))
+);
 
 /**
  * Auth Pages
  */
-const LoginPage = LoadComponent(React.lazy(() => import("@/views/auth/LoginPage")));
+const LoginPage = LoadComponent(
+  React.lazy(() => import("@/views/auth/LoginPage"))
+);
+const RegisterPage = LoadComponent(
+  React.lazy(() => import("@/views/auth/RegisterPage"))
+);
 
 /**
  * Dashboard Pages
  */
-const DashboardHomePage = LoadComponent(React.lazy(() => import("@/views/dashboard/HomePage")));
-const FileRecordLogFormPage = LoadComponent(React.lazy(() => import("@/views/dashboard/files/FileRecordLogFormPage")));
-const FilesIncomingPage = LoadComponent(React.lazy(() => import("@/views/dashboard/files/FilesIncomingPage")));
-const FilesOutgoingPage = LoadComponent(React.lazy(() => import("@/views/dashboard/files/FilesOutgoingPage")));
-const FilesReportsPage = LoadComponent(React.lazy(() => import("@/views/dashboard/files/FilesReportsPage")));
+const DashboardHomePage = LoadComponent(
+  React.lazy(() => import("@/views/dashboard/HomePage"))
+);
+const FileRecordLogFormPage = LoadComponent(
+  React.lazy(() => import("@/views/dashboard/files/FileRecordLogFormPage"))
+);
+const FilesIncomingPage = LoadComponent(
+  React.lazy(() => import("@/views/dashboard/files/FilesIncomingPage"))
+);
+const FilesOutgoingPage = LoadComponent(
+  React.lazy(() => import("@/views/dashboard/files/FilesOutgoingPage"))
+);
+const FilesReportsPage = LoadComponent(
+  React.lazy(() => import("@/views/dashboard/files/FilesReportsPage"))
+);
 
 export default createBrowserRouter([
   {
@@ -45,6 +62,10 @@ export default createBrowserRouter([
       {
         path: "/auth/login",
         element: LoginPage,
+      },
+      {
+        path: "/auth/register",
+        element: RegisterPage,
       },
     ],
   },

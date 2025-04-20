@@ -61,6 +61,43 @@ const FolderBrowser: React.FC<{
   type: string;
   files: DailyGroup[] | MonthlyGroup[] | YearlyGroup[];
 }> = ({ type, files }) => {
+  const [resourceType, setResourceType] = React.useState<string>("all");
+
+  const filterRecordsByResource = (records: Record[]) => {
+    if (resourceType === "all") return records;
+    return records.filter(
+      (record) => record.type_resource?.toLowerCase() === resourceType
+    );
+  };
+
+  const ResourceTypeFilter = () => (
+    <div className="flex items-center gap-1">
+      <Button.Group>
+        <Button
+          color={resourceType === "all" ? "blue" : "gray"}
+          onClick={() => setResourceType("all")}
+          size="sm"
+        >
+          All
+        </Button>
+        <Button
+          color={resourceType === "external" ? "blue" : "gray"}
+          onClick={() => setResourceType("external")}
+          size="sm"
+        >
+          External
+        </Button>
+        <Button
+          color={resourceType === "internal" ? "blue" : "gray"}
+          onClick={() => setResourceType("internal")}
+          size="sm"
+        >
+          Internal
+        </Button>
+      </Button.Group>
+    </div>
+  );
+
   const handleDownload = (path: string) => {
     window.open(path, "_blank");
   };
@@ -147,7 +184,15 @@ const FolderBrowser: React.FC<{
 
   const renderDailyView = () => {
     const dailyGroups = files as DailyGroup[];
-    const totalRecords = dailyGroups.reduce(
+    const filteredGroups = dailyGroups
+      .map((group) => ({
+        ...group,
+        records: filterRecordsByResource(group.records),
+        total: filterRecordsByResource(group.records).length,
+      }))
+      .filter((group) => group.records.length > 0);
+
+    const totalRecords = filteredGroups.reduce(
       (sum, group) => sum + group.total,
       0
     );
@@ -160,8 +205,8 @@ const FolderBrowser: React.FC<{
           </span>
         </div>
         <div className="flex-1 overflow-auto pb-[100px]">
-          {dailyGroups.length > 0 ? (
-            dailyGroups.map((group, index) => (
+          {filteredGroups.length > 0 ? (
+            filteredGroups.map((group, index) => (
               <div key={group.date}>
                 <div className="sticky top-0 z-10 bg-gray-50 px-4 py-2 border-b">
                   <h3 className="text-sm font-medium text-gray-700">
@@ -177,8 +222,7 @@ const FolderBrowser: React.FC<{
                   </h3>
                 </div>
                 {renderFileTable(group.records)}
-                {/* Add spacing between groups except for the last one */}
-                {index < dailyGroups.length - 1 && <div className="h-6" />}
+                {index < filteredGroups.length - 1 && <div className="h-6" />}
               </div>
             ))
           ) : (
@@ -192,10 +236,19 @@ const FolderBrowser: React.FC<{
   };
 
   const renderMonthlyView = () => {
+    const monthlyGroups = files as MonthlyGroup[];
+    const filteredGroups = monthlyGroups
+      .map((group) => ({
+        ...group,
+        records: filterRecordsByResource(group.records),
+        total: filterRecordsByResource(group.records).length,
+      }))
+      .filter((group) => group.records.length > 0);
+
     return (
       <div className="flex flex-col h-full">
         <Tabs className="border-b border-gray-200">
-          {(files as MonthlyGroup[]).map((group) => (
+          {filteredGroups.map((group) => (
             <Tabs.Item key={group.month} title={formatMonthYear(group.month)}>
               <div className="flex flex-col h-[calc(100vh-280px)]">
                 <div className="bg-white border-b py-2">
@@ -216,8 +269,15 @@ const FolderBrowser: React.FC<{
 
   const renderYearlyView = () => {
     const yearlyGroups = files as YearlyGroup[];
+    const filteredGroups = yearlyGroups
+      .map((group) => ({
+        ...group,
+        records: filterRecordsByResource(group.records || []),
+        total: filterRecordsByResource(group.records || []).length,
+      }))
+      .filter((group) => group.records.length > 0);
 
-    if (!Array.isArray(yearlyGroups) || yearlyGroups.length === 0) {
+    if (!Array.isArray(filteredGroups) || filteredGroups.length === 0) {
       return (
         <div className="text-center text-gray-500 py-8">No records found</div>
       );
@@ -226,17 +286,17 @@ const FolderBrowser: React.FC<{
     return (
       <div className="flex flex-col h-full">
         <Tabs className="border-b border-gray-200">
-          {yearlyGroups.map((group) =>
+          {filteredGroups.map((group) =>
             group?.year ? (
               <Tabs.Item key={group.year} title={group.year.toString()}>
                 <div className="flex flex-col h-[calc(100vh-280px)]">
                   <div className="bg-white border-b py-2">
                     <span className="text-sm text-gray-500">
-                      Total records: {group.total || 0}
+                      Total records: {group.total}
                     </span>
                   </div>
                   <div className="flex-1 overflow-auto pb-[100px]">
-                    {renderFileTable(group.records || [])}
+                    {renderFileTable(group.records)}
                   </div>
                 </div>
               </Tabs.Item>
@@ -252,9 +312,12 @@ const FolderBrowser: React.FC<{
       <Card className="h-full">
         <div className="flex flex-col h-full">
           <div className="bg-white pb-4 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {type.charAt(0).toUpperCase() + type.slice(1)} Records
-            </h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {type.charAt(0).toUpperCase() + type.slice(1)} Records
+              </h2>
+              <ResourceTypeFilter />
+            </div>
           </div>
           <div className="flex-1">
             {type === "daily" && renderDailyView()}

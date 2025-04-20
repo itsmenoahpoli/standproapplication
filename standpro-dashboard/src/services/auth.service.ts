@@ -22,6 +22,22 @@ export class AuthService extends BaseService {
       });
   }
 
+  public async registerCredentials(credentials: any) {
+    credentials.name = `${credentials.first_name} ${credentials.last_name}`;
+
+    return await this.http
+      .post("auth/register", credentials)
+      .then((response) => {
+        console.log(response.status);
+        toast.success("Account has been created");
+
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 2000);
+      })
+      .catch((error) => this.handleError(error));
+  }
+
   public async unauthenticateCredentials() {
     return await this.http
       .post("auth/logout")

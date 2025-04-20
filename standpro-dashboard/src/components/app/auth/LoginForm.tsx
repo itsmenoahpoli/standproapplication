@@ -20,25 +20,29 @@ export const LoginForm: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <form className="flex flex-col gap-y-3" onSubmit={onFormSubmit}>
-        <input
-          type="email"
-          className="w-full text-sm rounded-lg border border-gray-300"
-          placeholder="Please enter your e-mail"
-          {...register("email")}
-          autoFocus
-          required
-        />
-        <input
-          type="password"
-          className="w-full text-sm rounded-lg border border-gray-300"
-          placeholder="Please enter your password"
-          {...register("password")}
-          required
-        />
+    <div className="flex flex-col gap-y-4 w-full">
+      <form className="flex flex-col gap-y-4 w-full" onSubmit={onFormSubmit}>
+        <div className="flex flex-col gap-2">
+          <input
+            type="email"
+            className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
+            placeholder="Please enter your e-mail"
+            {...register("email")}
+            autoFocus
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            type="password"
+            className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
+            placeholder="Please enter your password"
+            {...register("password")}
+            required
+          />
+        </div>
 
-        <Button color="blue" type="submit">
+        <Button color="blue" type="submit" className="w-full">
           Log In
         </Button>
       </form>
@@ -46,7 +50,7 @@ export const LoginForm: React.FC = () => {
       <div className="text-center">
         <Link
           to="/auth/register"
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm md:text-base text-blue-600 hover:text-blue-800"
         >
           Don't have an account? Register here
         </Link>

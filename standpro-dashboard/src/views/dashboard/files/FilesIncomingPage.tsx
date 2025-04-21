@@ -109,7 +109,7 @@ const FilesIncomingPage: React.FC = () => {
               onChange={(e) => handleSearch(e.target.value, dateSearch)}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          {/* <div className="flex flex-col gap-1">
             <label htmlFor="date-search" className="text-sm text-gray-600">
               Filter by Date Received
             </label>
@@ -122,7 +122,7 @@ const FilesIncomingPage: React.FC = () => {
               value={dateSearch}
               onChange={(e) => handleSearch(subjectSearch, e.target.value)}
             />
-          </div>
+          </div> */}
         </div>
       </div>
 

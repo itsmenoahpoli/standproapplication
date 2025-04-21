@@ -106,7 +106,6 @@ const FilesIncomingPage: React.FC = () => {
                 <Table.HeadCell>From</Table.HeadCell>
                 <Table.HeadCell>Agency</Table.HeadCell>
                 <Table.HeadCell>Received By</Table.HeadCell>
-                <Table.HeadCell>Folder Name</Table.HeadCell>
                 <Table.HeadCell>Resource</Table.HeadCell>
                 <Table.HeadCell>Actions</Table.HeadCell>
               </Table.Head>

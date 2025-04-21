@@ -11,7 +11,8 @@ const _recordLogsService = new RecordLogsService();
 
 const FilesIncomingPage: React.FC = () => {
   const [list, setList] = React.useState<any>([]);
-  const [search, setSearch] = React.useState<string>("");
+  const [subjectSearch, setSubjectSearch] = React.useState<string>("");
+  const [dateSearch, setDateSearch] = React.useState<string>("");
 
   const { isLoading, refetch } = useQuery({
     queryKey: ["record-logs-incoming-data"],
@@ -29,16 +30,28 @@ const FilesIncomingPage: React.FC = () => {
     }
   };
 
-  const handleSearch = (searchVal: string) => {
-    setSearch(searchVal);
+  const handleSearch = (subjectVal: string, dateVal: string) => {
+    setSubjectSearch(subjectVal);
+    setDateSearch(dateVal);
 
-    if (!searchVal) {
+    if (!subjectVal && !dateVal) {
       return refetch();
     }
 
-    const filteredList = list.filter((item: any) => {
-      return item.subject.toLowerCase().includes(searchVal.toLowerCase());
-    });
+    const originalList = list;
+    let filteredList = [...originalList];
+
+    if (subjectVal) {
+      filteredList = filteredList.filter((item: any) =>
+        item.subject.toLowerCase().includes(subjectVal.toLowerCase())
+      );
+    }
+
+    if (dateVal) {
+      filteredList = filteredList.filter((item: any) =>
+        item.date_received.includes(dateVal)
+      );
+    }
 
     setList(filteredList);
   };
@@ -65,7 +78,7 @@ const FilesIncomingPage: React.FC = () => {
       </h1>
 
       {/* Actions Bar */}
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex justify-between items-center gap-4">
         <Link to="/dashboard/files/form?type=incoming">
           <Button
             color="light"
@@ -76,14 +89,32 @@ const FilesIncomingPage: React.FC = () => {
           </Button>
         </Link>
 
-        <div className="w-72">
-          <input
-            type="text"
-            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Search by subject..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="subject-search" className="text-sm text-gray-600">
+              Search by Subject
+            </label>
+            <input
+              id="subject-search"
+              type="text"
+              className="w-72 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Search by subject..."
+              value={subjectSearch}
+              onChange={(e) => handleSearch(e.target.value, dateSearch)}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="date-search" className="text-sm text-gray-600">
+              Filter by Date Received
+            </label>
+            <input
+              id="date-search"
+              type="date"
+              className="w-48 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              value={dateSearch}
+              onChange={(e) => handleSearch(subjectSearch, e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -146,7 +177,7 @@ const FilesIncomingPage: React.FC = () => {
                             <FiEdit size={16} />
                           </Link>
                           <a
-                            href={getFileSrc(d.path!)}
+                            href={d.path}
                             className="p-2 text-gray-600 hover:text-green-600 transition-colors"
                             target="_blank"
                             rel="noopener noreferrer"

@@ -314,8 +314,8 @@ const FolderBrowser: React.FC<{
             {type === "yearly" && renderYearlyView()}
             {type !== "daily" && type !== "monthly" && type !== "yearly" && (
               <div className="text-center text-gray-500 py-8">
-                {type.charAt(0).toUpperCase() + type.slice(1)} view is not
-                implemented yet
+                {type.charAt(0).toUpperCase() + type.slice(1)} No filter
+                selected yet
               </div>
             )}
           </div>

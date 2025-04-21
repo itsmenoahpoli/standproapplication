@@ -9,6 +9,12 @@ import { RecordLog } from "@/types/models";
 
 const _recordLogsService = new RecordLogsService();
 
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-GB"); // This will format as DD/MM/YYYY
+};
+
 const FilesOutgoingPage: React.FC = () => {
   const [list, setList] = React.useState<any>([]);
   const [subjectSearch, setSubjectSearch] = React.useState<string>("");
@@ -110,6 +116,8 @@ const FilesOutgoingPage: React.FC = () => {
             <input
               id="date-search"
               type="date"
+              pattern="\d{4}-\d{2}-\d{2}"
+              placeholder="YYYY-MM-DD"
               className="w-48 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={dateSearch}
               onChange={(e) => handleSearch(subjectSearch, e.target.value)}
@@ -153,9 +161,9 @@ const FilesOutgoingPage: React.FC = () => {
                 ) : (
                   list.map((d: RecordLog) => (
                     <Table.Row key={d.id} className="hover:bg-gray-50">
-                      <Table.Cell>{d.date_received}</Table.Cell>
+                      <Table.Cell>{formatDate(d.date_received)}</Table.Cell>
                       <Table.Cell>{d.time_released}</Table.Cell>
-                      <Table.Cell>{d.date_letter}</Table.Cell>
+                      <Table.Cell>{formatDate(d.date_letter)}</Table.Cell>
                       <Table.Cell className="font-medium">
                         {d.subject}
                       </Table.Cell>

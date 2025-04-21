@@ -131,7 +131,6 @@ const FilesOutgoingPage: React.FC = () => {
                       <Table.Cell>{d.from}</Table.Cell>
                       <Table.Cell>{d.agency}</Table.Cell>
                       <Table.Cell>{d.received_by}</Table.Cell>
-                      <Table.Cell>{d.name_of_folder}</Table.Cell>
                       <Table.Cell>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {d.type_resource?.toUpperCase()}

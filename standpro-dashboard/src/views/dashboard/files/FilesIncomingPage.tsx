@@ -12,7 +12,16 @@ const _recordLogsService = new RecordLogsService();
 const formatDate = (dateStr: string) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
-  return date.toLocaleDateString("en-GB"); // This will format as DD/MM/YYYY
+  return date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  }); // This will format as MM/DD/YYYY
+};
+
+const formatDateForFilter = (dateStr: string) => {
+  if (!dateStr) return "";
+  return dateStr.split("T")[0]; // This handles ISO date strings
 };
 
 const FilesIncomingPage: React.FC = () => {
@@ -36,34 +45,33 @@ const FilesIncomingPage: React.FC = () => {
     }
   };
 
-  const handleSearch = (subjectVal: string, dateVal: string) => {
-    setSubjectSearch(subjectVal);
-    setDateSearch(dateVal);
-
-    if (!subjectVal && !dateVal) {
+  const handleSearch = () => {
+    if (!subjectSearch && !dateSearch) {
       return refetch();
     }
 
     const originalList = list;
     let filteredList = [...originalList];
 
-    if (subjectVal) {
+    if (subjectSearch) {
       filteredList = filteredList.filter((item: any) =>
-        item.subject.toLowerCase().includes(subjectVal.toLowerCase())
+        item.subject.toLowerCase().includes(subjectSearch.toLowerCase())
       );
     }
 
-    if (dateVal) {
-      filteredList = filteredList.filter((item: any) =>
-        item.date_received.includes(dateVal)
+    if (dateSearch) {
+      filteredList = filteredList.filter(
+        (item: any) => formatDateForFilter(item.date_received) === dateSearch
       );
     }
 
     setList(filteredList);
   };
 
-  const getFileSrc = (path: string) => {
-    return `http://localhost:8000/assets/get?path=${path}`;
+  const handleClear = () => {
+    setSubjectSearch("");
+    setDateSearch("");
+    refetch();
   };
 
   return (
@@ -95,7 +103,7 @@ const FilesIncomingPage: React.FC = () => {
           </Button>
         </Link>
 
-        <div className="flex gap-4">
+        <div className="flex items-end gap-4">
           <div className="flex flex-col gap-1">
             <label htmlFor="subject-search" className="text-sm text-gray-600">
               Search by Subject
@@ -106,23 +114,29 @@ const FilesIncomingPage: React.FC = () => {
               className="w-72 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Search by subject..."
               value={subjectSearch}
-              onChange={(e) => handleSearch(e.target.value, dateSearch)}
+              onChange={(e) => setSubjectSearch(e.target.value)}
             />
           </div>
-          {/* <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <label htmlFor="date-search" className="text-sm text-gray-600">
               Filter by Date Received
             </label>
             <input
               id="date-search"
               type="date"
-              pattern="\d{4}-\d{2}-\d{2}"
-              placeholder="YYYY-MM-DD"
               className="w-48 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={dateSearch}
-              onChange={(e) => handleSearch(subjectSearch, e.target.value)}
+              onChange={(e) => setDateSearch(e.target.value)}
             />
-          </div> */}
+          </div>
+          <div className="flex gap-2">
+            <Button color="blue" onClick={handleSearch}>
+              Apply
+            </Button>
+            <Button color="light" onClick={handleClear}>
+              Clear
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -37,4 +37,13 @@ class AuthController extends Controller
 
         return response()->json($result, Response::HTTP_CREATED);
     }
+
+    public function checkUsers() : JsonResponse
+    {
+        $result = $this->authService->checkSystemHasUser();
+
+        return response()->json([
+            'has_users' => $result
+        ], Response::HTTP_OK);
+    }
 }

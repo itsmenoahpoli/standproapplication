@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function() {
     Route::prefix('auth')->group(function () {
         Route::post('login', [AuthController::class, 'login'])->name('auth.login');
         Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+        Route::get('check-users', [AuthController::class, 'checkUsers'])->name('auth.check-users');
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');

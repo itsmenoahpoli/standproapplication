@@ -48,4 +48,11 @@ class AuthService
 
         return $this->user->create($data);
     }
+
+    public function checkSystemHasUser()
+    {
+        $hasUsers = User::count() > 0;
+
+        return $hasUsers;
+    }
 }

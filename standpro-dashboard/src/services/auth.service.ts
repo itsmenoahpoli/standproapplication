@@ -4,6 +4,18 @@ import { useAuthStore } from "@/store";
 import type { Credentials } from "@/types/auth";
 
 export class AuthService extends BaseService {
+  public async checkSystemUsers() {
+    return await this.http
+      .get("auth/check-users")
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        toast.error("FAILED CHECKING SYSTEM USERS");
+        this.handleError(error);
+      });
+  }
+
   public async authenticateCredentials(credentials: Credentials) {
     return await this.http
       .post("auth/login", credentials)

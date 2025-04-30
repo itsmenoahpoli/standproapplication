@@ -15,9 +15,21 @@ export const LoginForm: React.FC = () => {
     },
   });
 
+  const [hasUsers, setHasUsers] = React.useState<boolean>(false);
+
   const onFormSubmit = handleSubmit(async (formData) => {
     return _authService.authenticateCredentials(formData as Credentials);
   });
+
+  const checkSystemUsers = async () => {
+    const checkUsers = await _authService.checkSystemUsers();
+
+    setHasUsers(checkUsers.has_users);
+  };
+
+  React.useEffect(() => {
+    checkSystemUsers();
+  }, []);
 
   return (
     <div className="flex flex-col gap-y-4 w-full">
@@ -48,12 +60,21 @@ export const LoginForm: React.FC = () => {
       </form>
 
       <div className="text-center">
-        <Link
-          to="/auth/register"
-          className="text-sm md:text-base text-blue-600 hover:text-blue-800"
-        >
-          Don't have an account? Register here
-        </Link>
+        {hasUsers ? (
+          <Link
+            to="/auth/forgot-password"
+            className="text-sm md:text-base text-blue-600 hover:text-blue-800"
+          >
+            Forgot your password?
+          </Link>
+        ) : (
+          <Link
+            to="/auth/register"
+            className="text-sm md:text-base text-blue-600 hover:text-blue-800"
+          >
+            Don't have an account? Register here
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { FiHome, FiInbox, FiSend, FiPieChart, FiLogOut } from "react-icons/fi";
 import { useAuthHook } from "@/hooks/auth.hook";
 import { useAuthStore } from "@/store";
 import { APP_ROUTES } from "@/constants";
-import FILES_LOGO from "@/assets/files-logo.jpeg";
+import BRAND_LOGO from "@/assets/brand-logo.jpeg";
 
 const sidebarMenuItems = [
   {
@@ -56,7 +56,12 @@ export const DashboardLayout: React.FC = () => {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-gray-900 shadow-lg">
-        <div className="h-16 p-4 border-b border-gray-700"></div>
+        <img
+          src={BRAND_LOGO}
+          alt="brand-logo"
+          className="h-[80px] w-1/2 mx-auto mb-4"
+        />
+
         <nav className="mt-6">
           {sidebarMenuItems.map((item) => (
             <button

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { AuthService } from "@/services";
+import { toast } from "react-toastify";
 
 const _authService = new AuthService();
 
@@ -14,20 +15,72 @@ export const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      first_name: "John",
-      last_name: "Doe",
-      email: "johndoe@domain.com",
-      username: "johndoe",
-      password: "password",
-      confirm_password: "password",
+      first_name: "",
+      last_name: "",
+      email: "",
+      mobile_number: "",
+      username: "",
+      password: "",
+      confirm_password: "",
     },
+    mode: "onSubmit",
   });
 
   const password = watch("password");
 
-  const onFormSubmit = handleSubmit(async (formData) => {
-    return _authService.registerCredentials(formData as any);
-  });
+  const displayValidationErrors = (errors: any) => {
+    const errorMessages = Object.values(errors).map(
+      (error: any) => error.message
+    );
+
+    if (errorMessages.length > 0) {
+      toast.error(
+        <div>
+          <strong>Please fix the following errors:</strong>
+          <ul className="mt-2 list-disc pl-4">
+            {errorMessages.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        </div>,
+        {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
+    }
+  };
+
+  const checkFormErrors = () => {
+    if (Object.keys(errors).length > 0) {
+      displayValidationErrors(errors);
+      return true;
+    }
+    return false;
+  };
+
+  const onFormSubmit = handleSubmit(
+    async (formData) => {
+      if (checkFormErrors()) return;
+
+      const loadingToast = toast.loading("Creating your account...");
+
+      try {
+        await _authService.registerCredentials(formData as any);
+        toast.dismiss(loadingToast);
+      } catch (error) {
+        toast.dismiss(loadingToast);
+      }
+    },
+    (errors) => {
+      // This function runs when validation fails
+      displayValidationErrors(errors);
+    }
+  );
 
   return (
     <div className="flex flex-col gap-y-4 w-full">
@@ -37,7 +90,13 @@ export const RegisterForm: React.FC = () => {
             type="text"
             className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
             placeholder="First Name"
-            {...register("first_name", { required: "First name is required" })}
+            {...register("first_name", {
+              required: "First name is required",
+              minLength: {
+                value: 2,
+                message: "First name must be at least 2 characters",
+              },
+            })}
           />
           {errors.first_name && (
             <small className="text-red-500">{errors.first_name.message}</small>
@@ -49,10 +108,36 @@ export const RegisterForm: React.FC = () => {
             type="text"
             className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
             placeholder="Last Name"
-            {...register("last_name", { required: "Last name is required" })}
+            {...register("last_name", {
+              required: "Last name is required",
+              minLength: {
+                value: 2,
+                message: "Last name must be at least 2 characters",
+              },
+            })}
           />
           {errors.last_name && (
             <small className="text-red-500">{errors.last_name.message}</small>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <input
+            type="tel"
+            className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
+            placeholder="Mobile Number"
+            {...register("mobile_number", {
+              required: "Mobile number is required",
+              pattern: {
+                value: /^[0-9+\-\s()]*$/,
+                message: "Invalid mobile number format",
+              },
+            })}
+          />
+          {errors.mobile_number && (
+            <small className="text-red-500">
+              {errors.mobile_number.message}
+            </small>
           )}
         </div>
 
@@ -65,7 +150,7 @@ export const RegisterForm: React.FC = () => {
               required: "Email is required",
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address",
+                message: "Invalid email address format",
               },
             })}
           />
@@ -79,7 +164,18 @@ export const RegisterForm: React.FC = () => {
             type="text"
             className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
             placeholder="Username"
-            {...register("username", { required: "Username is required" })}
+            {...register("username", {
+              required: "Username is required",
+              minLength: {
+                value: 3,
+                message: "Username must be at least 3 characters",
+              },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message:
+                  "Username can only contain letters, numbers and underscores",
+              },
+            })}
           />
           {errors.username && (
             <small className="text-red-500">{errors.username.message}</small>
@@ -91,7 +187,13 @@ export const RegisterForm: React.FC = () => {
             type="password"
             className="w-full p-2.5 text-sm md:text-base rounded-lg border border-gray-300"
             placeholder="Password"
-            {...register("password", { required: "Password is required" })}
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+            })}
           />
           {errors.password && (
             <small className="text-red-500">{errors.password.message}</small>

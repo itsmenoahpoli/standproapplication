@@ -26,6 +26,9 @@ const LoginPage = LoadComponent(
 const RegisterPage = LoadComponent(
   React.lazy(() => import("@/views/auth/RegisterPage"))
 );
+const ResetPasswordPage = LoadComponent(
+  React.lazy(() => import("@/views/auth/ResetPasswordPage"))
+);
 
 /**
  * Dashboard Pages
@@ -66,6 +69,10 @@ export default createBrowserRouter([
       {
         path: "/auth/register",
         element: RegisterPage,
+      },
+      {
+        path: "/auth/forgot-password",
+        element: ResetPasswordPage,
       },
     ],
   },

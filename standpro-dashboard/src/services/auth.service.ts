@@ -4,6 +4,31 @@ import { useAuthStore } from "@/store";
 import type { Credentials } from "@/types/auth";
 
 export class AuthService extends BaseService {
+  public async resetPassword(mobileNumber: string, password: string) {
+    return await this.http
+      .post("auth/reset-password", { mobile_number: mobileNumber, password })
+      .then(() => {
+        toast.success("Password has been reset successfully!");
+        return true;
+      })
+      .catch((error) => {
+        toast.error("INVALID MOBILE NUMBER");
+        this.handleError(error);
+      });
+  }
+
+  public async verifyMobileNumber(mobileNumber: string) {
+    return await this.http
+      .post("auth/verify-mobile-number", { mobile_number: mobileNumber })
+      .then(() => {
+        return true;
+      })
+      .catch((error) => {
+        toast.error("INVALID MOBILE NUMBER");
+        this.handleError(error);
+      });
+  }
+
   public async checkSystemUsers() {
     return await this.http
       .get("auth/check-users")
@@ -39,15 +64,32 @@ export class AuthService extends BaseService {
 
     return await this.http
       .post("auth/register", credentials)
-      .then((response) => {
-        console.log(response.status);
-        toast.success("Account has been created");
+      .then(() => {
+        toast.success("Account has been created successfully!");
 
         setTimeout(() => {
           window.location.href = "/auth/login";
         }, 2000);
       })
-      .catch((error) => this.handleError(error));
+      .catch((error) => {
+        if (error.response) {
+          const { status, data } = error.response;
+
+          if (status === 422) {
+            toast.error(
+              "Registration failed: Email or username already exists"
+            );
+          } else {
+            toast.error(
+              `Registration failed: ${data.message || "An error occurred"}`
+            );
+          }
+        } else {
+          toast.error("Registration failed: Could not connect to the server");
+        }
+
+        this.handleError(error);
+      });
   }
 
   public async unauthenticateCredentials() {

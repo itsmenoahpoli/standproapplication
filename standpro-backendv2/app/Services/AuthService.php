@@ -55,4 +55,30 @@ class AuthService
 
         return $hasUsers;
     }
+
+    public function verifyMobileNumber($mobileNumber)
+    {
+        $user = User::where('mobile_number', $mobileNumber)->first();
+
+        if (!$user) {
+            throw new HttpException(404, 'USER_NOT_FOUND');
+        }
+
+        return true;
+    }
+
+    public function resetPassword($mobileNumber, $password)
+    {
+        $user = User::where('mobile_number', $mobileNumber)->first();
+
+        if (!$user) {
+            throw new HttpException(404, 'USER_NOT_FOUND');
+        }
+
+        $user->update([
+            'password' => Hash::make($password)
+        ]);
+
+        return true;
+    }
 }

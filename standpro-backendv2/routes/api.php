@@ -21,6 +21,8 @@ Route::prefix('v1')->group(function() {
         Route::post('login', [AuthController::class, 'login'])->name('auth.login');
         Route::post('register', [AuthController::class, 'register'])->name('auth.register');
         Route::get('check-users', [AuthController::class, 'checkUsers'])->name('auth.check-users');
+        Route::post('verify-mobile-number', [AuthController::class, 'verifyMobileNumber'])->name('auth.verify-mobile-number');
+        Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');

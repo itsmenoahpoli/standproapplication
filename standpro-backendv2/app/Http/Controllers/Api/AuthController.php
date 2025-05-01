@@ -46,4 +46,18 @@ class AuthController extends Controller
             'has_users' => $result
         ], Response::HTTP_OK);
     }
+
+    public function verifyMobileNumber(Request $request) : JsonResponse
+    {
+        $result = $this->authService->verifyMobileNumber($request->mobile_number);
+
+        return response()->json($result, Response::HTTP_OK);
+    }
+
+    public function resetPassword(Request $request) : JsonResponse
+    {
+        $result = $this->authService->resetPassword($request->mobile_number, $request->password);
+
+        return response()->json($result, Response::HTTP_OK);
+    }
 }
